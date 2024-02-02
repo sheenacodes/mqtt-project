@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mqtt-producer-app"
+name = "mqtt-publisher-app"
 version = "0.1.0"
 description = ""
 authors = ["Sheena <11192150+sheenacodes@users.noreply.github.com>"]
@@ -7,8 +7,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+paho-mqtt = "^1.6.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+publish = "mqtt_publisher_app.publish:main"
