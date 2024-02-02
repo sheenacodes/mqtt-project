@@ -1,9 +1,6 @@
 # Project Name
 
-The project is made as a simple data pipeline which contains:
-- raw data in the form of csv/json files
-- python script to pick up the raw data files and remove PII and load raw data tables in postgres
-- dbt scripts to concatenate the raw data tables and load it to postgres
+Mono repo consisting of mqtt producer application, mqtt subscriber application that receives and stores messages in a database, and reader application that provides a rest api endpoint to retrieve the stored mqtt messages
 
 ## Table of Contents
 
@@ -15,35 +12,7 @@ The project is made as a simple data pipeline which contains:
 Instructions on how to install and set up the project.
 
 ```bash
-docker-compose build
-docker-compose up postgres
+docker-compose
 ```
 
 ## Usage
-
-to extract and load raw data
-
-```bash
-docker-compose run etl-service etl hb 2021-04-28
-docker-compose run etl-service etl wwc 2021-04-28
-docker-compose run etl-service etl wwc 2021-04-29
-```
-
-to concatenate tables and load.
-
-```bash
-docker-compose run dbt run --models concatenated_users
-docker-compose run dbt test
-```
-
-to run the analytics queries
-```bash
-sh ./analytics/run_postgres_script.sh
-```
-
-##Tests
-to run pytest
-
-```bash
-docker-compose run etl-service pytest
-```
