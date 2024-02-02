@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "mqtt-subsriber-app"
+version = "0.1.0"
+description = ""
+authors = ["Sheena <11192150+sheenacodes@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
