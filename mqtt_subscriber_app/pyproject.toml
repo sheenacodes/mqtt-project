@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mqtt-subsriber-app"
+name = "mqtt-subscriber-app"
 version = "0.1.0"
 description = ""
 authors = ["Sheena <11192150+sheenacodes@users.noreply.github.com>"]
@@ -7,6 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+paho-mqtt = "^1.6.1"
 
 
 [build-system]
@@ -14,4 +15,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-subscribe = "mqtt_subscriber_ap.subscribe:main"
+subscribe = "mqtt_subscriber_app.subscribe:main"

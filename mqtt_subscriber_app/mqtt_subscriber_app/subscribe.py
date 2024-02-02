@@ -4,6 +4,11 @@ broker_address = "localhost"
 port = 1883
 topic = "test_topic"
 
+# MQTT broker details
+broker_address = "localhost"
+port = 6060
+topic = "iot_12345"
+
 
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
