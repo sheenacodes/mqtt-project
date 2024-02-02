@@ -16,7 +16,9 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+#RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install poetry && poetry install
+
 
 # Run mqtt_producer.py when the container launches
 CMD ["python", "./mqtt_producer.py"]
