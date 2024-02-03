@@ -40,3 +40,4 @@ __pycache__/
 #mosquitto
 mosquitto/data
 mosquitto/log
+mqtt_subscriber_app/log
