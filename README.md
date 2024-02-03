@@ -26,3 +26,10 @@ cd mqtt_publisher_app
 poetry install
 poetry run publish
 ```
+
+to subscribe to published messages
+```bash
+cd mqtt_subscriber_app
+poetry install
+poetry run subscribe
+```
