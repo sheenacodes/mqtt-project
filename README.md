@@ -27,9 +27,17 @@ poetry install
 poetry run publish
 ```
 
-to subscribe to published messages
+to subscribe to published messages and save to db
 ```bash
 cd mqtt_subscriber_app
 poetry install
 poetry run subscribe
 ```
+
+to set up fastapi server to read messages from mongo db
+```bash
+cd mqtt_reader_app
+poetry install
+poetry run uvicorn-fastapi
+```
+check it works at http://127.0.0.1:8000/messages
