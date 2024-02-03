@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  mqtt-broker:
+  mqtt_broker:
     image: eclipse-mosquitto:2.0
     ports:
       - "1883:1883"
@@ -11,6 +11,8 @@ services:
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
     restart: always
+    networks:
+      - shared_network
 
   mongo:
     image: mongo:7.0
@@ -22,29 +24,13 @@ services:
       - mongo:/data/db
     ports:
       - '27017:27017'
-
-
-
-  # mqtt_producer:
-  #   build: ./mqtt_producer_app
-  #   ports:
-  #     - "6060:6060"
-  #   depends_on:
-  #     - db
-  # mqtt_subscriber:
-  #   build: ./mqtt_subscriber_app
-  #   depends_on:
-  #     - db
-  #     - mqtt_producer
-
-  # api:
-  #   build: ./mqtt_reader_app
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - db
-  #     - mqtt_producer
-  #     - mqtt_subscriber
+    restart: always
+    networks:
+      - shared_network
 
 volumes:
   mongo:
+
+networks:
+  shared_network:
+    driver: bridge

@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+  mqtt_publisher:
+    build: ./mqtt_publisher_app
+    environment:
+      - MQTT_BROKER_ADDR=mqtt_broker
+      - MQTT_BROKER_PORT=1883
+    networks:
+      - shared_network
+
+
+  # mqtt_subscriber:
+  #   build: ./mqtt_subscriber_app
+  #   depends_on:
+  #     - db
+  #     - mqtt_producer
+
+  # api:
+  #   build: ./mqtt_reader_app
+  #   ports:
+  #     - "5000:5000"
+  #   depends_on:
+  #     - db
+  #     - mqtt_producer
+  #     - mqtt_subscriber
+
+
+networks:
+  shared_network:
+    external:
+      name: enersense_project_shared_network
