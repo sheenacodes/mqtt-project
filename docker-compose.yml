@@ -12,9 +12,18 @@ services:
       - ./mosquitto/log:/mosquitto/log
     restart: always
 
+  mongo:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: fastapi
+    volumes:
+      - mongo:/data/db
+    ports:
+      - '27017:27017'
 
-  # db:
-  #   image: mongo:3.4
+
 
   # mqtt_producer:
   #   build: ./mqtt_producer_app
@@ -36,3 +45,6 @@ services:
   #     - db
   #     - mqtt_producer
   #     - mqtt_subscriber
+
+volumes:
+  mongo:
