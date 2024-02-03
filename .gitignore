@@ -36,3 +36,7 @@ __pycache__/
 
 #ruff
 .ruff_cache
+
+#mosquitto
+mosquitto/data
+mosquitto/log

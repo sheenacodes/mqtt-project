@@ -1,13 +1,10 @@
 import paho.mqtt.client as mqtt
-
-broker_address = "localhost"
-port = 1883
-topic = "test_topic"
+import os
 
 # MQTT broker details
-broker_address = "localhost"
-port = 6060
-topic = "iot_12345"
+broker_address = os.getenv("MQTT_BROKER_ADDR", "localhost")
+port = os.getenv("MQTT_BROKER_PORT", 1883)
+topic = os.getenv("MQTT_TOPIC", "iot_1")
 
 
 def on_connect(client, userdata, flags, rc):
@@ -19,12 +16,28 @@ def on_message(client, userdata, msg):
     print(f"Received message: {msg.payload.decode()}")
 
 
+def main():
+    try:
+        # Create MQTT client
+        client = mqtt.Client()
+
+        # Set callback functions
+        client.on_connect = on_connect
+        client.on_message = on_message
+
+        # Connect to the broker
+        client.connect(broker_address, port, 60)
+
+        # Start the loop
+        client.loop_forever()
+
+    except KeyboardInterrupt:
+        print("Exiting...")
+
+    finally:
+        client.disconnect()
+        client.loop_stop()
+
+
 if __name__ == "__main__":
-    client = mqtt.Client()
-
-    client.on_connect = on_connect
-    client.on_message = on_message
-
-    client.connect(broker_address, port, 60)
-
-    client.loop_forever()
+    main()
