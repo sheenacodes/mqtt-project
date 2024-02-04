@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from pymongo import MongoClient
 import os
 
@@ -15,9 +15,24 @@ collection = db[collection_name]
 app = FastAPI()
 
 
+# Dependency to get MongoDB client
+def get_mongo_client():
+    return MongoClient(mongo_uri)
+
+
+# Dependency to get MongoDB database
+def get_database(client: MongoClient = Depends(get_mongo_client)):
+    return client[database_name]
+
+
+# Dependency to get MongoDB collection
+def get_collection(db=Depends(get_database)):
+    return db[collection_name]
+
+
+# FastAPI route using the dependencies
 @app.get("/messages")
-def get_messages():
-    # Retrieve all messages from MongoDB
+async def get_messages(collection=Depends(get_collection)):
     messages = list(collection.find({}, {"_id": 0, "message": 1}))
     return {"messages": messages}
 

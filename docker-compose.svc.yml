@@ -19,20 +19,21 @@ services:
       - MONGO_URI=mongodb://admin:password@mongo:27017/
       - MONDO_DB_NAME=mqtt_messages
       - MONGO_COLLECTION_NAME=messages
-
     volumes:
       - ./mqtt_subscriber_app/log:/app/log
     networks:
       - shared_network
+    depends_on:
+      - mqtt_publisher
 
-  # api:
-  #   build: ./mqtt_reader_app
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - db
-  #     - mqtt_producer
-  #     - mqtt_subscriber
+  api:
+    build: ./mqtt_reader_app
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://admin:password@mongo:27017/
+      - MONDO_DB_NAME=mqtt_messages
+      - MONGO_COLLECTION_NAME=messages
 
 
 networks:
