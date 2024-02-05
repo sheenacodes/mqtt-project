@@ -11,7 +11,7 @@
 - [Instructions for Partially Local Set Up](#instructions-for-partially-local-set-up)
 
 
-## Instruction
+## Instructions for Fully Dockerised Set Up
 
 to set up broker, mongo-db and all the services
 ```bash
