@@ -7,7 +7,7 @@
 
 
 ## Table of Contents
-- [Instruction](#instruction)
+- [Instructions for Fully Dockerised Set Up](#instructions-for-fully-dockerised-set-up)
 - [Instructions for Partially Local Set Up](#instructions-for-partially-local-set-up)
 
 

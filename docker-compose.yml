@@ -32,7 +32,7 @@ services:
       - MONGO_URI=mongodb://admin:password@mongo_mqtt_store:27017/
       - MONDO_DB_NAME=mqtt_messages
       - MONGO_COLLECTION_NAME=messages
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=DEBUG
     volumes:
       - ./mqtt_subscriber_app/log:/app/log
     depends_on:
@@ -51,6 +51,7 @@ services:
       - TEST_MONGO_URI=mongodb://admin:password@mongo_mqtt_store:27017/
       - TEST_MONDO_DB_NAME=test_mqtt_messages
       - TEST_MONGO_COLLECTION_NAME=test_messages
+      - LOG_LEVEL=DEBUG
     depends_on:
       - mongo_mqtt_store
 

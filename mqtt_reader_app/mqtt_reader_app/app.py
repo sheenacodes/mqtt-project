@@ -1,8 +1,6 @@
 from fastapi import FastAPI, Depends
 from pymongo import MongoClient
 import logging
-
-
 from pydantic_settings import BaseSettings
 
 
@@ -11,9 +9,12 @@ class Settings(BaseSettings):
     mongo_uri: str = "mongodb://admin:password@localhost:27017/"
     mongo_db_name: str = "mqtt_messages"
     mongo_collection_name: str = "messages"
+    log_level: str = "INFO"
 
 
 settings = Settings()
+
+logging.basicConfig(level=settings.log_level.upper())
 
 # MongoDB Connection
 mongo_client = MongoClient(settings.mongo_uri)
