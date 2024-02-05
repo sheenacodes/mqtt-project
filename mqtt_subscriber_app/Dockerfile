@@ -7,7 +7,7 @@ WORKDIR /app
 # Create a non-root user
 RUN adduser -D -u 1000 appuser
 
-# Copy the current directory contents into the container at /app
+# Copy the required directory contents into the container at /app
 COPY mqtt_subscriber_app /app
 
 # Change the ownership of the working directory to the non-root user
@@ -20,5 +20,7 @@ USER appuser
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY ./entrypoint.sh .
+
 # Run publish when the container launches
-CMD ["python", "/app/subscribe.py"]
+#CMD ["python", "/app/subscribe.py"]
