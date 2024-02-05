@@ -8,7 +8,7 @@ WORKDIR /app
 RUN adduser -D -u 1000 appuser
 
 # Copy the required directory contents into the container at /app
-COPY mqtt_subscriber_app /app
+COPY . .
 
 # Change the ownership of the working directory to the non-root user
 RUN chown -R appuser:appuser /app
@@ -19,6 +19,7 @@ USER appuser
 # Install any needed packages specified in requirements.txt
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install pytest
 
 COPY ./entrypoint.sh .
 

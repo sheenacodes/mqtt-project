@@ -48,6 +48,9 @@ services:
       - MONGO_URI=mongodb://admin:password@mongo_mqtt_store:27017/
       - MONDO_DB_NAME=mqtt_messages
       - MONGO_COLLECTION_NAME=messages
+      - TEST_MONGO_URI=mongodb://admin:password@mongo_mqtt_store:27017/
+      - TEST_MONDO_DB_NAME=test_mqtt_messages
+      - TEST_MONGO_COLLECTION_NAME=test_messages
     depends_on:
       - mongo_mqtt_store
 

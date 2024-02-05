@@ -8,7 +8,7 @@ WORKDIR /app
 RUN adduser -D -u 1000 appuser
 
 # Copy required contents into the container at /app
-COPY mqtt_reader_app /app
+COPY . .
 
 # Change the ownership of the working directory to the non-root user
 RUN chown -R appuser:appuser /app
@@ -21,6 +21,3 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./entrypoint.sh .
-
-# Run publish when the container launches
-#CMD ["python", "app.py"]

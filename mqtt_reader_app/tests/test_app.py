@@ -4,11 +4,17 @@ from pymongo import MongoClient
 from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, patch
 from mqtt_reader_app.app import app, get_collection, get_database, get_mongo_client
+from pydantic_settings import BaseSettings
 
-# MongoDB Configuration for testing
-test_mongo_uri = "mongodb://admin:password@localhost:27017/"
-test_database_name = "test_mqtt_messages"  # Use a different database for testing
-test_collection_name = "test_messages"
+
+# mongo db configuration
+class Settings(BaseSettings):
+    test_mongo_uri: str = "mongodb://admin:password@localhost:27017/"
+    test_mongo_db_name: str = "test_mqtt_messages"
+    test_mongo_collection_name: str = "test_messages"
+
+
+settings = Settings()
 
 
 @pytest.fixture
@@ -16,8 +22,8 @@ def test_database():
     """Create a test database and insert test data. Provide the test database as a fixture."""
 
     # create the test database
-    test_client = MongoClient(test_mongo_uri)
-    test_db = test_client[test_database_name]
+    test_client = MongoClient(settings.test_mongo_uri)
+    test_db = test_client[settings.test_mongo_db_name]
 
     # Insert test data into the test collection
     test_data = [
@@ -29,15 +35,13 @@ def test_database():
             }
         }
     ]
-    test_db[test_collection_name].insert_many(test_data)
+    test_db[settings.test_mongo_collection_name].insert_many(test_data)
 
     # Provide the test database as a fixture
     yield test_db
 
     # Teardown: Drop the test database after the test
-    test_client.drop_database(test_database_name)
-
-    print(f"Dropped Test Database: {test_database_name}")
+    test_client.drop_database(settings.test_mongo_db_name)
 
 
 def override_dependencies(test_database):
@@ -45,7 +49,7 @@ def override_dependencies(test_database):
     app.dependency_overrides[get_mongo_client] = lambda: MagicMock()
     app.dependency_overrides[get_database] = lambda: test_database
     app.dependency_overrides[get_collection] = lambda: test_database[
-        test_collection_name
+        settings.test_mongo_collection_name
     ]
 
     print(f"Overriding dependencies with Test Database: {test_database}")

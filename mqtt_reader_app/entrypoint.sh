@@ -8,4 +8,4 @@ done
 
 echo "mongo db started"
 
-python app.py
+python mqtt_reader_app/app.py

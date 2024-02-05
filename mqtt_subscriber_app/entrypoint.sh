@@ -16,4 +16,4 @@ done
 
 echo "mongo db started"
 
-python subscribe.py
+python mqtt_subscriber_app/subscribe.py
