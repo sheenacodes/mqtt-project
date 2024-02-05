@@ -4,6 +4,20 @@ from pymongo import MongoClient
 import logging
 import time
 import sys
+from pydantic_settings import BaseSettings
+
+
+# configuration from environment variables
+class Settings(BaseSettings):
+    mongo_uri: str = "mongodb://admin:password@localhost:27017/"
+    mongo_db_name: str = "mqtt_messages"
+    mongo_collection_name: str = "messages"
+    mqtt_broker_addr: str = "localhost"
+    mqtt_port: int = 1883
+    log_level: str = "INFO"
+
+
+settings = Settings()
 
 # Set up logging to a file
 log_directory = "./log/"
@@ -12,7 +26,6 @@ if not os.path.exists(log_directory):
 
 # Set up logging to a file
 file_handler = logging.FileHandler(os.path.join(log_directory, "mqtt_messages.log"))
-file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(
     logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 )
@@ -24,34 +37,23 @@ file_logger.addHandler(file_handler)
 
 # Set up logging to console
 console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(
     logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 )
 
 # Create a logger for console logging
 console_logger = logging.getLogger("console_logger")
-console_logger.setLevel(logging.INFO)
+console_logger.setLevel(settings.log_level.upper())
 console_logger.addHandler(console_handler)
-
-
-# MQTT broker details
-mqtt_broker_address = os.getenv("MQTT_BROKER_ADDR", "localhost")
-mqtt_port = int(os.getenv("MQTT_BROKER_PORT", 1883))
 
 
 MQTT_TOPIC_PREFIX = "charger/1/connector/1/session/"
 topic = f"{MQTT_TOPIC_PREFIX}#"
 
-# MongoDB Configuration
-mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:password@localhost:27017/")
-database_name = os.getenv("MONDO_DB_NAME", "mqtt_messages")
-collection_name = os.getenv("MONGO_COLLECTION_NAME", "messages")
-
 # MongoDB Connection
-mongo_client = MongoClient(mongo_uri)
-db = mongo_client[database_name]
-collection = db[collection_name]
+mongo_client = MongoClient(settings.mongo_uri)
+db = mongo_client[settings.mongo_db_name]
+collection = db[settings.mongo_collection_name]
 
 
 def on_connect(client, userdata, flags, rc):
@@ -62,6 +64,7 @@ def on_connect(client, userdata, flags, rc):
         client.subscribe(topic)
     except Exception as e:
         console_logger.error(f"An error occurred while subscribing to the topic: {e}")
+        raise
 
 
 def on_message(client, userdata, message):
@@ -71,11 +74,13 @@ def on_message(client, userdata, message):
         topic = message.topic
         payload = message.payload.decode("utf-8")
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        console_logger.info(
+        console_logger.debug(
             f"Received message on topic {topic} at {timestamp}: {payload}"
         )
 
         payload = message.payload.decode("utf-8")
+
+        # Log the message to a file
         file_logger.info(f"topic:{topic} timestamp:{timestamp} payload{payload}")
 
         # Save the message to MongoDB
@@ -105,7 +110,7 @@ def main():
         mqtt_client.on_message = on_message
 
         # Connect to the broker
-        mqtt_client.connect(mqtt_broker_address, mqtt_port, 60)
+        mqtt_client.connect(settings.mqtt_broker_addr, settings.mqtt_port, 60)
 
         # Start the loop
         mqtt_client.loop_forever()
