@@ -11,10 +11,11 @@ test_database_name = "test_mqtt_messages"  # Use a different database for testin
 test_collection_name = "test_messages"
 
 
-# Pytest fixture to create and populate the test database
 @pytest.fixture
 def test_database():
-    # Assuming you're using MongoClient, create the test database
+    """Create a test database and insert test data. Provide the test database as a fixture."""
+
+    # create the test database
     test_client = MongoClient(test_mongo_uri)
     test_db = test_client[test_database_name]
 
@@ -30,7 +31,8 @@ def test_database():
     ]
     test_db[test_collection_name].insert_many(test_data)
 
-    yield test_db  # Provide the test database as a fixture
+    # Provide the test database as a fixture
+    yield test_db
 
     # Teardown: Drop the test database after the test
     test_client.drop_database(test_database_name)
@@ -38,8 +40,8 @@ def test_database():
     print(f"Dropped Test Database: {test_database_name}")
 
 
-# Override the MongoDB connection in the FastAPI app for testing
 def override_dependencies(test_database):
+    """Override the MongoDB dependencies in the FastAPI app with the test database."""
     app.dependency_overrides[get_mongo_client] = lambda: MagicMock()
     app.dependency_overrides[get_database] = lambda: test_database
     app.dependency_overrides[get_collection] = lambda: test_database[
@@ -49,20 +51,13 @@ def override_dependencies(test_database):
     print(f"Overriding dependencies with Test Database: {test_database}")
 
 
-# Test function to check if /messages returns correct response
 def test_get_messages(test_database):
-    print(f"Test Database: {test_database}")
-    print(f"Test Data: {test_database[test_collection_name].find_one()}")
-    # Override dependencies
+    """Test the /messages route of the FastAPI app."""
+
+    # Override the MongoDB connection in the FastAPI app and send a request using the TestClient
     override_dependencies(test_database)
-
-    # Create a test client
     client = TestClient(app)
-
-    # Make a request to the /messages endpoint
     response = client.get("/messages")
-
-    # Check if the response status code is 200 (OK)
     assert response.status_code == 200
 
     # Check if the response contains the expected test data
@@ -79,17 +74,13 @@ def test_get_messages(test_database):
     }
 
 
-# Test function to check if the main function runs without errors
 def test_main_function():
-    # Override dependencies
-    override_dependencies(MagicMock())
+    """Test the main function of the FastAPI app."""
 
     # Mock the uvicorn.run function
     with patch("uvicorn.run") as mock_run:
-        # Call the main function
         from mqtt_reader_app.app import main
 
+        # Call the main function and ensure that uvicorn.run is called with the correct arguments
         main()
-
-        # Ensure uvicorn.run was called with the expected arguments
-        mock_run.assert_called_once_with(app, host="127.0.0.1", port=8000)
+        mock_run.assert_called_once_with(app, host="0.0.0.0", port=8000)

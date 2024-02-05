@@ -1,39 +1,48 @@
 from fastapi import FastAPI, Depends
 from pymongo import MongoClient
-import os
+import logging
 
-# MongoDB Configuration
-mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:password@localhost:27017/")
-database_name = os.getenv("MONDO_DB_NAME", "mqtt_messages")
-collection_name = os.getenv("MONGO_COLLECTION_NAME", "messages")
+
+from pydantic_settings import BaseSettings
+
+
+# mongo db configuration
+class Settings(BaseSettings):
+    mongo_uri: str = "mongodb://admin:password@localhost:27017/"
+    mongo_db_name: str = "mqtt_messages"
+    mongo_collection_name: str = "messages"
+
+
+settings = Settings()
 
 # MongoDB Connection
-mongo_client = MongoClient(mongo_uri)
-db = mongo_client[database_name]
-collection = db[collection_name]
+mongo_client = MongoClient(settings.mongo_uri)
+db = mongo_client[settings.mongo_db_name]
+collection = db[settings.mongo_collection_name]
 
 app = FastAPI()
 
 
 # Dependency to get MongoDB client
 def get_mongo_client():
-    return MongoClient(mongo_uri)
+    return MongoClient(settings.mongo_uri)
 
 
 # Dependency to get MongoDB database
 def get_database(client: MongoClient = Depends(get_mongo_client)):
-    return client[database_name]
+    return client[settings.mongo_db_name]
 
 
 # Dependency to get MongoDB collection
 def get_collection(db=Depends(get_database)):
-    return db[collection_name]
+    return db[settings.mongo_collection_name]
 
 
-# FastAPI route using the dependencies
+# route using the dependencies
 @app.get("/messages")
 async def get_messages(collection=Depends(get_collection)):
     messages = list(collection.find({}, {"_id": 0, "message": 1}))
+    logging.debug("/messages called")
     return {"messages": messages}
 
 
@@ -41,7 +50,7 @@ def main():
     import uvicorn
 
     # Run the FastAPI app using Uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 if __name__ == "__main__":
